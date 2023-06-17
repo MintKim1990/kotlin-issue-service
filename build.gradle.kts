@@ -10,9 +10,6 @@ plugins {
 
 java.sourceCompatibility = JavaVersion.VERSION_17
 
-//java {
-//	sourceCompatibility = JavaVersion.VERSION_17
-//}
 
 // 상위 프로젝트 및 하위 프로젝트에 대한 전체 프로젝트 설정
 allprojects {
