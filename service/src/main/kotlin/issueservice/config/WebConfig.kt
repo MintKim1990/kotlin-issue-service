@@ -23,7 +23,7 @@ class WebConfig(
 @Component
 class AuthUserHandlerArgumentResolver : HandlerMethodArgumentResolver {
 
-    // 인증 처리를 위한 리졸버로 리플렉션 메소드를 이용해 들어온 파라미터가 AuthUser인지 체크하는 로직
+    // 인증 처리를 위한 리졸버로 요청 메서드 파라미터에 AuthUser클래스가 존재하는지 체크하는 로직
     override fun supportsParameter(parameter: MethodParameter): Boolean =
         AuthUser::class.java.isAssignableFrom(parameter.parameterType)
 
