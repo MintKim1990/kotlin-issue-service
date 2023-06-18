@@ -41,5 +41,22 @@ class IssueService (
         return IssueResponse(issue)
     }
 
+    @Transactional
+    fun edit(userId: Long, id: Long, request: IssueRequest): IssueResponse {
+        val issue = (issueRepository.findByIdOrNull(id)
+            ?: throw NotFoundException("이슈가 존재하지 않습니다."))
+
+        return with(issue) {
+            summary = request.summary
+            description = request.description
+            this.userId = userId
+            type = request.type
+            priority = request.priority
+            status = request.status
+            // 변경감지가 동작하지만 명시적으로 보여주기 위해 save 호출
+            IssueResponse(issueRepository.save(this))
+        }
+    }
+
 
 }
