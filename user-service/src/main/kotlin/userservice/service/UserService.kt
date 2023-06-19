@@ -1,9 +1,11 @@
 package userservice.service
 
+import com.auth0.jwt.interfaces.DecodedJWT
 import org.springframework.stereotype.Service
 import userservice.config.JwtProperties
 import userservice.domain.entity.User
 import userservice.domain.repository.UserRepository
+import userservice.exception.InvalidJwtTokenException
 import userservice.exception.PasswordNotMatchedException
 import userservice.exception.UserExistException
 import userservice.exception.UserNotFoundException
@@ -71,6 +73,18 @@ class UserService (
 
     suspend fun logout(token: String) {
         cacheManager.awaitEvict(token)
+    }
+
+    suspend fun getByToken(token: String): User {
+        return cacheManager.awaitGetOrPut(key = token, ttl = CACHE_TTL) {
+            val decodedJWT: DecodedJWT = JwtUtils.decode(token, jwtProperties.secret, jwtProperties.issuer)
+            val userId = decodedJWT.claims["userId"]?.asLong() ?: throw InvalidJwtTokenException()
+            get(userId)
+        }
+    }
+
+    suspend fun get(userId: Long) : User {
+        return userRepository.findById(userId) ?: throw UserNotFoundException()
     }
 
 }
